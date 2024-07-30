@@ -1,0 +1,8 @@
+---
+- name: Remove Httpd server
+  hosts: all
+  tasks: 
+    - name: remove
+      yum:
+        name: httpd
+        state: absent

@@ -1,0 +1,47 @@
+---
+- name: testing file manipultion skills
+  hosts: rhce1
+  tasks:
+  - name: create anew file
+    file:
+      name: /tmp/newfile
+      state: touch
+  - name: check status of new file
+    stat:
+      path: /tmp/newfile
+    register: newfile 
+  - name: for debbug only
+    debug:
+      msg: the current value for newfile are {{ newfile }}
+  - name: change file owner
+    file:
+      path: /tmp/newfile
+      owner: ansible
+    when: newfile.stat.pw_name != 'ansible'
+
+- name: fetching a remote file
+  hosts: rhce1
+  tasks:
+  - name: fetch file from remote machine
+    fetch:
+      src: /etc/motd
+      dest: /tmp
+
+- name: adding text to the file that is now on localhost
+  hosts: localhost
+  tasks:
+  - name: add a message
+    blockinfile:
+      path: /tmp/rhce1/etc/motd
+      block: | 
+        Wwelcome to this server
+        for authorized userss only
+      state: present
+
+- name: copy the modified file to ansible2
+  hosts: rhce2
+  tasks:
+  - name: copy motd file
+    copy:
+     src: /tmp/rhce1/etc/motd
+     dest: /tmp

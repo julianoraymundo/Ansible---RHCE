@@ -1,0 +1,19 @@
+---
+- name: setup a service
+  hosts: rhce1
+  tasks: 
+  - name: include the service task file 
+    include_tasks: tasks/service.yaml
+    vars:
+      package: httpd
+      service: httpd
+    when: ansible_facts['os_family'] == 'RedHat'
+  - name: import the firewall file
+    import_tasks: tasks/firewall.yaml
+    vars:
+      firewall_package: firewalld 
+      firewall_service: firewalld
+      firewall_rules:
+      - http
+      - https
+      

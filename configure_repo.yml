@@ -1,0 +1,12 @@
+---
+- name: setting up repositories
+  hosts: all
+  tasks:
+  - name: configuring repo 
+    yum_repolist:
+      name: example repo
+      description: exemple repo 
+      file: examplerepo
+      baseurl: ftp://control.localhost.local
+      gpgcheck: no
+      enabled: yes

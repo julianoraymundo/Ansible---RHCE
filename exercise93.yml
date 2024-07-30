@@ -1,0 +1,14 @@
+---
+- hosts: all
+  vars:
+    timesync_ntp_servers:
+    - hostname: pool.ntp.org
+      ibusrt: yes
+    timezone: UTC
+  roles:
+  - rhel-system-roles.timesync
+  tasks:
+  - name: set timezone
+    timezone:
+      name: "{{ timezone }}"
+      

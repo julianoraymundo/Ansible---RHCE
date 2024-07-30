@@ -1,0 +1,5 @@
+- name: Enable and Start Service {{ package }}
+  service:
+    name: "{{ service }}"
+    state: started
+    enabled: yes

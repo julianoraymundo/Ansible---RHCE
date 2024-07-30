@@ -1,0 +1,54 @@
+---
+- name: install, configure, start and enable ftp 
+  hosts: rhce3
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+  - name: install ftp server
+    yum:
+      name: vsftpd
+      state: latest
+  - name: allow anonymous access to ftp
+    lineinfile: 
+      path: /etc/vsftpd/vsftpd.conf
+      regexp: '^anonymous_enable=NO'
+      line: anonymous_enable=YES
+  - name: start FTP server 
+    service:
+      name: vsftpd 
+      state: started
+      enabled: yes 
+  - name: open firewall port for FTP 
+    firewalld:
+      service: ftp
+      state: enabled 
+      immediate: true
+      permanent: true 
+
+
+- name: setup the repo directory
+  hosts: rhce3
+  tasks:
+  - name: make directory
+    file: 
+      path: /var/ftp/repo
+      state: directory
+  - name: download packages
+    yum:
+      name: nmap
+      download_only: yes
+      download_dir: /var/ftp/repo
+  - name: install createrepo package
+    yum:
+      name: createrepo_c
+      state: latest
+  - name: createrepo
+    command: createrepo /var/ftp/repo
+    notify:
+    - restart_ftp
+  handlers:
+  - name: restart_ftp
+    service: 
+       name: vsftpd
+       state: restarted
+       

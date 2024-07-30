@@ -1,0 +1,6 @@
+- name: Open Firewall for service {{ package }}
+  firewalld:
+    service: "{{ fw_service }}"
+    state: enabled
+    immediate: true
+    permanent: true

@@ -1,0 +1,16 @@
+---
+- name: lab 141
+  hosts: rhce3
+  tasks:
+  - name: reboot at 2 am 
+    cron:
+      name: "reboot server"
+      minute: "0"
+      hour: "2"
+      job: "reboot"
+  - name: Notify the log 
+    cron:
+      name: "notify log"
+      state: present
+      special_time: reboot
+      job: "logger CRON initiated reboot just completed"    

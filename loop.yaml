@@ -1,0 +1,10 @@
+---
+- name: manage packages with loop from a list
+  hosts: node1
+  vars_files: packages
+  tasks:
+  - name: install packages
+    yum:
+      name: "{{ item.name }}"
+      state: "{{ item.state }}"
+    loop: "{{ packages }}"

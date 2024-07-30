@@ -1,0 +1,10 @@
+---
+- name: create a user using variables
+  hosts: node1
+  vars:
+    users: lisa
+  tasks:
+    - name: ceate a user {{ users }} on host {{ ansible_hostname }}
+      user:
+        name: "{{ users }}"
+        

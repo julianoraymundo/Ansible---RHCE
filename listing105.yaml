@@ -1,0 +1,11 @@
+---
+- name: run a tasks
+  hosts: all
+  tasks: 
+  - debug:
+      msg: running task 1
+
+# this is a new play
+- name: importing a playbook
+  import_playbook: listing104.yaml
+  

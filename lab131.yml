@@ -1,0 +1,32 @@
+---
+- name: setup users ans groups
+  hosts: rhce3
+  vars:
+    users: 
+    - kim
+    - christina
+    - kelly
+    - bill
+    grupos:
+    - profs
+    - students
+  tasks:
+  - name: setup groups 
+    group:
+      name: "{{ item }}"
+      state: present
+    loop: "{{ grupos }}"
+
+  - name: setup users
+    user: 
+      name: "{{ item }}"
+      state: present
+      groups: profs
+      password: $6$mysalt$NN1QGsmCO0hcvplH4ahY6ocho6F6TgcY8yNdMFAeO.LAeFodNPGA6KsQM5Or1AKbE4QKSqnEsC/SE0Zz3ts9y1
+    loop: "{{ users }}"
+
+  - name: configure sudo permission
+    copy:
+      content: '%profs ALL=(ALL:ALL) NOPASSWD:ALL'
+      dest: /etc/sudoers.d/profs
+    

@@ -1,0 +1,12 @@
+---
+- name: use the motd role playbook
+  hosts: node1
+  roles:
+    - role: motd
+      system_manager: bob@example.com
+[ansible@controller chapter9]$ cat exercise92.yaml 
+---
+- name: install nginx using galaxy role
+  hosts: node2
+  roles:
+    - geerlingguy.nginx

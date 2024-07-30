@@ -1,0 +1,16 @@
+---
+- name: check for existence of devices
+  hosts: rhce1
+  tasks:
+  - name: check if /dev/sda exists
+    debug:
+      msg: a disk /dev/sda exists
+    when: ansible_facts['devices']['sda'] is defined
+  - name: check if /dev/sdb exists
+    debug:
+      msg: a disk /dev/sdb/ exists
+    when: ansible_facts.devices.sdb is defined
+  - name: check if /dev/sdc not exists
+    debug:
+      msg: a disk /dev/sdc not exists
+    when: ansible_facts.devices.sdc is not defined

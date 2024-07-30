@@ -1,0 +1,9 @@
+---
+- name: install package with variables 2
+  hosts: node1
+  vars_file: /home/ansible/control/vars/common
+  tasks:
+  - name: install package
+    yum:
+      name: "{{ my_package }}"
+      state: latest

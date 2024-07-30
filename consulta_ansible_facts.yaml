@@ -1,0 +1,7 @@
+---
+- name: consulting ansible_facts variable
+  hosts: node1
+  tasks:
+  - name: show all facts on {{ ansible_hostname }}
+    debug:
+      var: ansible_facts

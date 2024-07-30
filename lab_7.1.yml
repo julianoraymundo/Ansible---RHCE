@@ -1,0 +1,65 @@
+---
+- name: LAB 7.1 
+  hosts: rhce2
+  vars_files: packages
+  tasks:
+  - name: Install httpd and mod_ssl only on centos and rhel and fail if not 
+    yum:
+      name: "{{ item }}"
+      state: latest
+    with_items: "{{ packages }}"
+    when: >
+      ( ansible_facts.distribution == "RedHat" or 
+        ansible_facts.distribution == "CentOS"  )
+      and 
+      ( ansible_facts.distribution_major_version >= "8" )
+    register: yum_result
+  - debug:
+      var: "yum_result"
+  - fail: 
+      msg: "The Host {{ ansible_facts.nodename }} does not meet minimal requirements"
+    when: yum_result.skipped == true
+
+- name: Copy index.html
+  hosts: rhce2
+  tasks:
+  - name: copy fle 
+    copy:
+      src: /tmp/index.html
+      dest: /var/www/html/
+    notify: 
+    - restart_web 
+  handlers:
+    - name: restart_web
+      service: 
+        name: httpd
+        state: restarted
+
+- name: Open's the firewall
+  hosts: rhce2
+  tasks:
+  - name: oppening
+    firewalld:
+      service: "{{ item }}"
+      permanent: true
+      state: enabled
+      immediate: yes
+    loop:
+    - http
+    - https
+
+- name: Enable Services
+  hosts: rhce2
+  tasks:
+  - name: enable webserver
+    service:
+      name: httpd
+      state: started
+      enabled: true
+  - name: enable firewalld
+    service:
+      name: firewalld
+      state: started
+      enabled: true
+
+      

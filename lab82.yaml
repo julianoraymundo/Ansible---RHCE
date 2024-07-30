@@ -1,0 +1,71 @@
+# First Play
+---
+- name: Install VSFTPD
+  hosts: node1
+  tasks:
+  - name: Install VSFTPD
+    yum:
+      name: vsftpd 
+      state: latest
+  - name: Enable and Start Service
+    service:
+      name: vsftpd
+      state: started
+      enabled: yes
+  - name: Open Firewall
+    firewalld:
+      service: ftp
+      state: enabled
+      immediate: true
+      permanent: true
+
+# Second play 
+- name: Configure VSFTPD
+  hosts: node1
+  tasks:
+  - name: Adjust vsftpd.conf file permissions
+    file:
+      path: /etc/vsftpd/vsftpd.conf
+      mode: 0664
+      owner: root
+      group: root
+  - name: Generate a template
+    ansible.builtin.template:
+      src: vsftpd.conf.j2
+      dest: /etc/vsftpd/vsftpd.conf
+  - name: Adjusting vsftpd.conf Config
+    lineinfile:
+      dest: /etc/vsftpd/vsftpd.conf
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    loop:
+      - { regexp: "^anonymous_enable", line: "anonymous_enable=yes" }
+      - { regexp: "^local_enable", line: "local_enable=yes" }
+      - { regexp: "^write_enable", line: "write_enable=yes" }
+      - { regexp: "^anon_upload_enable", line: "anon_upload_enable=yes" }
+  - name: Set permissions
+    file: 
+      path: /var/ftp/pub
+      state: directory
+      mode: 0777
+      owner: ftp
+      group: ftp
+  - name: Configure Boolean SELinux
+    seboolean:
+      name: ftpd_anon_write
+      state: yes
+      persistent: yes
+  - name: Configure Context SELinux      
+    sefcontext:
+      setype: public_content_rw_t
+      target: /var/ftp/pub
+      state: present
+  - name: Restore Context SELinux
+    command: restorecon -v /var/ftp/pub
+    notify: Reload VSFTPD
+  handlers:
+  - name: Reload VSFTPD
+    service:
+      name: vsftpd
+      state: restarted  
+      

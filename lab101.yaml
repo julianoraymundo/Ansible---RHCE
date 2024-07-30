@@ -1,0 +1,30 @@
+# First Play
+---
+- name: Install {{ package }}
+  hosts: all 
+  serial: 2
+  vars_files: vars/lab101-vars.yaml
+  tasks:
+  - name: import tasks
+    include_tasks: "{{ item }}"
+    loop:
+      - tasks/lab101-install_package.yaml
+      - tasks/lab101-enable_package.yaml
+      - tasks/lab101-open_firewall.yaml
+
+# Second play 
+- name: Configure the system for run {{ package }}
+  hosts: all
+  serial: 2
+  vars_files: vars/lab101-vars.yaml
+  tasks:
+  - name: import task 
+    include_tasks: "{{ item }}"
+    loop:
+      - tasks/lab101-configure_ftp.yaml
+      - tasks/lab101-configure_selinux.yaml
+
+
+
+ 
+      

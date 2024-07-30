@@ -1,0 +1,29 @@
+---
+- name: configure repository
+  hosts: all
+  vars: 
+    my_package: nmap
+  tasks:
+  - name: connecto to example repo 
+    yum_repository:
+      name: exercise122
+      description: RHCE9 exercice 122 repo
+      file: exercise122
+      baseurl: ftp://rhce3/repo
+      gpgcheck: no
+  - name: ensure repo host is reacheable
+    lineinfile:
+      path: /etc/hosts
+      line: 172.23.130.133 rhce3 
+  - name: install package 
+    yum: 
+      name: "{{ my_package }}"
+      state: present
+  - name: update package facts 
+    package_facts:
+      manager:
+        auto
+  - name: show package facts for {{ my_package }}
+    debug:
+      var: ansible_facts.packages[my_package]
+    when: my_package in ansible_facts.packages

@@ -1,0 +1,27 @@
+---
+- name: using the file module
+  hosts: servers
+  tasks: 
+  - name: create a directory
+    file: 
+      path: /tmp/newdir
+      owner: ansible
+      group: ansible
+      mode: 770
+      state: directory
+  - name: create a file in that directory
+    file: 
+      path: /tmp/newdir/newfile
+      state: touch
+  - name: show the file
+    file:
+      path: /tmp/newdir/newfile
+    register: result
+  - debug:
+      msg: | 
+        This shows that newfile was created
+        "{{ result }}"
+  - name: removing everything
+    file:
+      path: /tmp/newdir
+      state: absent

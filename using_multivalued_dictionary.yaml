@@ -1,0 +1,10 @@
+---
+- name: show dictionary also known as hash
+  hosts: node1
+  vars_files:
+  - vars/users-dictionary
+  tasks:
+  - name:
+    debug:
+       msg: " User {{ users.linda.username }} has a home directory {{ users.linda.homedir }} and a shell {{ users.linda.shell }}"
+       

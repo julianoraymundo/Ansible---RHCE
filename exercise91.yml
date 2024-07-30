@@ -1,0 +1,6 @@
+---
+- name: use the motd role playbook
+  hosts: node1
+  roles:
+    - role: motd
+      system_manager: bob@example.com

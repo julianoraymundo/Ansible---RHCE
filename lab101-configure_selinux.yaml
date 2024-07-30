@@ -1,0 +1,23 @@
+- name: Set permissions
+  file: 
+    path: /var/ftp/pub
+    state: directory
+    mode: 0777
+    owner: ftp
+    group: ftp
+- name: Configure Boolean SELinux
+  seboolean:
+    name: ftpd_anon_write
+    state: yes
+    persistent: yes
+- name: Configure Context SELinux      
+  sefcontext:
+    setype: public_content_rw_t
+    target: /var/ftp/pub
+    state: present
+- name: Restore Context SELinux
+  command: restorecon -v /var/ftp/pub
+- name: Reload VSFTPD
+  service:
+    name: vsftpd
+    state: restarted

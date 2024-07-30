@@ -1,0 +1,55 @@
+---
+
+  - name: Configure HTTPD server
+    hosts: all
+    vars_files: allvars.yaml
+    tasks:
+    - name: Instala, ativa, e copia o index.html do HTTPD
+      yum:
+        name: "{{ ansible_facts['ansible_local']['custom_packages']['packages']['web_package'] }}"
+        state: latest
+    - name: Enable HTTPD service
+      service:
+        name: "{{ ansible_facts['ansible_local']['custom_services']['services']['web_service'] }}"
+        state: started
+        enabled: yes
+    - name: Copy the index.html file
+      copy:
+        content: |
+          Welcome to the Ansible Web Server.
+        dest: /var/www/html/index.html
+#    - name: Ajustando as permissões do arquivo index.html
+#      file:
+#        name: /var/www/html/index.html
+#        mode: 644
+#        group: www-data
+#        owner: www-data
+
+  - name: Configure FTP server
+    hosts: all
+    vars_files: allvars.yaml
+    tasks:
+    - name: Instala e ativa VSFTPD
+      yum:
+        name: "{{ ansible_facts['ansible_local']['custom_packages']['packages']['ftp_package'] }}"
+        state: latest
+    - name: Enable VSFTPD service
+      service:
+        name: "{{ ansible_facts['ansible_local']['custom_services']['services']['ftp_service'] }}"
+        state: started
+        enabled: yes
+
+  - name: Configura o firewall 
+    hosts: all
+    vars_files: allvars.yaml
+    tasks:
+    - name: Abre as portas e os serviços
+      firewalld:
+        service: "{{ item }}"
+        state: enabled
+        permanent: yes
+        immediate: yes
+      loop:
+        - http 
+        - ftp 
+...

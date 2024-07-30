@@ -1,0 +1,20 @@
+- name: Adjust vsftpd.conf file permissions
+  file:
+    path: /etc/vsftpd/vsftpd.conf
+    mode: 0664
+    owner: root
+    group: root
+- name: Generate a template
+  ansible.builtin.template:
+    src: templates/vsftpd.conf.j2
+    dest: /etc/vsftpd/vsftpd.conf
+- name: Adjusting vsftpd.conf Config
+  lineinfile:
+    dest: /etc/vsftpd/vsftpd.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: "^anonymous_enable", line: "anonymous_enable=yes" }
+    - { regexp: "^local_enable", line: "local_enable=yes" }
+    - { regexp: "^write_enable", line: "write_enable=yes" }
+    - { regexp: "^anon_upload_enable", line: "anon_upload_enable=yes" }

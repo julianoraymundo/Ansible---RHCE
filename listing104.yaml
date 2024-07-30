@@ -1,0 +1,5 @@
+- hosts: all
+  tasks:
+    - debug:
+        msg: running the imported play
+        

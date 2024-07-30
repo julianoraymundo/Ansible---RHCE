@@ -1,0 +1,4 @@
+- name: global variable setup
+  package: vsftpd
+  service: vsftpd
+  fw_service: ftp

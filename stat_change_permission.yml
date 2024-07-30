@@ -1,0 +1,16 @@
+---
+- name: stat modules test
+  hosts: servers
+  tasks:
+  - command: touch /tmp/statfile
+  - stat:
+      path: /tmp/statfile
+    register: st 
+  - name: show current values
+    debug:
+      msg: "{{ st }}"
+  - name: changing file permissions
+    file:
+      path: /tmp/statfile
+      mode: 0640
+    when: st.stat.mode != '0640'

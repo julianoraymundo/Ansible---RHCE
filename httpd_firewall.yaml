@@ -1,0 +1,38 @@
+---
+- name: enable web server
+  hosts: node1
+  tasks:
+  - name: install stuff
+    yum:
+      - httpd
+      - firewalld
+  - name: create a welcome page
+    copy:
+      content: "Welcome to the webserver on node1.razor.local"
+      dest: /var/www/html/index.html
+  - name: enable webserver
+    service:
+      name: httpd
+      state: started
+      enabled: true
+  - name: enable firewalld
+    service:
+      name: firewalld
+      state: started
+      enabled: true
+  - name: open service in firewall
+    firewalld:
+      service: http
+      permanent: true
+      state: enabled
+      immediate: yes
+
+- name: test webserver
+  hosts: localhost
+  become: no
+  tasks:
+  - name: test webserver access
+    uri:
+      url: http://node1.razor.local
+      return_content: yes
+      status_code: 200

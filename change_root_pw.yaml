@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    newpassword: 1234567890
+  tasks:
+  - name: Create hash password
+    shell: python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt('{{ newpassword.stdout }}')"
+    register: newpassword_hash
+    delegate_to: localhost
+  - name: Change user password
+    user:
+      name: root
+      update_password: always
+      password: "{{ newpassword_hash.stdout }}"

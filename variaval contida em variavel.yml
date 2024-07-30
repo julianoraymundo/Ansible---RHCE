@@ -1,0 +1,16 @@
+---
+- name: test if a variable is in another variables list
+  hosts: all
+  vars_prompt:
+  - name: my_answer
+    prompt: wich package do you want to install
+  vars: 
+    supported_packages:
+    - httpd
+    - nginx
+  tasks:
+  - name:
+    debug:
+      msg: you are trying to install a supprted package
+    when: my_answer in supported_packages
+  

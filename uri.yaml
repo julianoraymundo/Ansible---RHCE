@@ -1,0 +1,13 @@
+--- 
+- name: test web server access
+  hosts: rhce1
+  become: no
+  tasks:
+  - name: connect to the webserver
+    uri:
+      url: http://rhce1
+      return_content: yes
+    register: this
+    failed_when: "'welcome' note in this.content"
+  - debug:
+    var: this.content

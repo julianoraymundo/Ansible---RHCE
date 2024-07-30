@@ -1,0 +1,16 @@
+---
+- name: Modifying file
+  hosts: servers
+  tasks:
+  - name: ensure /tmp/hosts exists
+    file:
+      path: /tmp/hosts
+      state: touch
+  - name: add some lines to /tmp/hosts
+    blockinfile:
+      path: /tmp/hosts
+      block: |
+        172.23.130.130 controller
+        172.23.130.131 rhce1
+        172.23.130.132 rhce2
+      state: present

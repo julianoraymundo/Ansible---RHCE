@@ -1,0 +1,59 @@
+---
+- name: Managing web server SELinux properties
+  hosts: rhce1
+  tasks:
+  - name: ensure SELinus is enabled and enforcing
+    selinux:
+      policy: targeted
+      state: enforcing
+  - name: install the webserver
+    yum:
+      name: httpd 
+      state: latest
+  - name: start and enable web server
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+  - name: open the firewall service
+    firewalld:
+      service: http 
+      state: enabled
+      immediate: yes
+  - name: create the /web directory
+    file:
+      name: /web
+      state: directory
+  - name: create the index.html file in /web
+    copy:
+      content: 'Welcome to the exercise 82 web server'
+      dest: /web/index.html
+  - name: use lineinfile to change webserver configuration
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^DocumentRoot "/var/www/html"'
+      line: DocumentRoot "/web"
+  - name: use lineinfile to change webserver security
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^<Directory "/var/www/html>"' 
+      line: '<Directory "/web">'
+    notify:
+      - restart httpd
+  handlers:
+  - name: restart httpd
+    service:
+      name: httpd
+      state: restarted
+  - name: use sefcontext to set context on new documentroot
+    sefcontext:
+      target: '/web(/.*)?'
+      setype: httpd_sys_content_t
+      state: present
+  - name: run the restorecon command
+    command: restorecon -Rv /web
+  - name: allow the webserver to run user content
+    seboolean:
+      name: httpd_read_user_content
+      state: yes
+      persistent: yes

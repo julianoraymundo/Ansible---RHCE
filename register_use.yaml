@@ -1,0 +1,8 @@
+---
+- name: coletando valores com registro
+  hosts: node1
+  tasks:
+    - shell: cat /etc/passwd
+    register: passwd_contents
+    - debug:
+      var: "passwd_contents"

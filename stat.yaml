@@ -1,0 +1,10 @@
+---
+- name: retorna os valores de um arquivos (stat)
+  hosts: servers
+  tasks:
+  - stat:
+      path: /etc/hosts
+    register: st
+  - name: exibe os valores
+    debug:
+      msg: "{{ st }}"

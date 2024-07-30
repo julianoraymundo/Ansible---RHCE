@@ -1,0 +1,14 @@
+---
+- name: Install Httpd server
+  hosts: all
+  tasks: 
+    - name: install
+      yum: 
+        name: httpd
+        state: latest
+    - name: enable
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      
